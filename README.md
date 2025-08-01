@@ -1,7 +1,5 @@
 # Seat Type Management
 
----
-
 ## 1. Build the Project
 
 ```sh
