@@ -1,0 +1,35 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Seat Type Management</title>
+    <link th:href="@{/css/bootstrap.min.css}" rel="stylesheet">
+</head>
+<body class="p-4 bg-light">
+<div class="container">
+    <h1 class="display-5 fw-bold text-primary mb-3">Edit Seat Type</h1>
+    <div>
+        <form th:action="@{/seat-type/edit}" th:object="${seatType}" method="post"
+              class="bg-white p-4 rounded shadow-sm">
+            <div class="mb-3">
+                <label for="seatTypeName" class="form-label">Seat Type Name</label>
+                <input type="text" id="seatTypeName" th:field="*{seatTypeName}" class="form-control"/>
+                <div class="text-danger mt-1" th:if="${#fields.hasErrors('seatTypeName')}"
+                     th:errors="*{seatTypeName}"></div>
+            </div>
+            <div class="mb-3">
+                <label for="workerMemo" class="form-label">Worker Memo</label>
+                <input type="text" id="workerMemo" th:field="*{workerMemo}" class="form-control"/>
+            </div>
+            <div class="d-flex justify-content-start">
+                <input type="hidden" th:field="*{id}"/>
+                <button type="submit" class="btn btn-success me-2">Edit</button>
+                <a th:href="@{/seat-type/booking}" class="btn btn-secondary">Back</a>
+            </div>
+        </form>
+    </div>
+</div>
+<script th:src="@{/js/bootstrap.bundle.min.js}"></script>
+</body>
+</html>

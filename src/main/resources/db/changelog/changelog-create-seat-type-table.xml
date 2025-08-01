@@ -1,0 +1,23 @@
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.17.xsd">
+
+    <changeSet id="create-seat-type-table" author="thiennd">
+        <createTable tableName="seat_type">
+            <column name="id" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="seat_type_code" type="VARCHAR(2)">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="seat_type_name" type="VARCHAR(30)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="worker_memo" type="VARCHAR(255)"/>
+            <column name="deleted" type="BOOLEAN" defaultValueBoolean="false"/>
+            <column name="is_booked" type="BOOLEAN" defaultValueBoolean="false"/>
+        </createTable>
+    </changeSet>
+</databaseChangeLog>

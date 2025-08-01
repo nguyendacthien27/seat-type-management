@@ -1,0 +1,56 @@
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.17.xsd">
+
+    <changeSet id="create-users-table" author="thiennd">
+        <createTable tableName="users">
+            <column name="username" type="VARCHAR2(50)">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="pwd" type="VARCHAR2(100)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="enabled" type="NUMBER(1)" defaultValueNumeric="1">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="create-authorities-table" author="thiennd">
+        <createTable tableName="authorities">
+            <column name="username" type="VARCHAR2(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="authority" type="VARCHAR2(50)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <addForeignKeyConstraint
+                baseTableName="authorities"
+                baseColumnNames="username"
+                referencedTableName="users"
+                referencedColumnNames="username"
+                constraintName="fk_user"/>
+
+        <createIndex tableName="authorities" indexName="ix_auth_username" unique="true">
+            <column name="username"/>
+            <column name="authority"/>
+        </createIndex>
+    </changeSet>
+
+    <changeSet id="create-user-admin" author="thiennd">
+        <insert tableName="users">
+            <column name="username" value="admin"/>
+            <column name="pwd" value="$2a$10$EW8z5TG1ylMWwk09PX0m.Oud.AOejjUB62pWcvR5PO9SeJZ6PDIcK"/>
+            <column name="enabled" valueNumeric="1"/>
+        </insert>
+
+        <insert tableName="authorities">
+            <column name="username" value="admin"/>
+            <column name="authority" value="ROLE_ADMIN"/>
+        </insert>
+    </changeSet>
+</databaseChangeLog>

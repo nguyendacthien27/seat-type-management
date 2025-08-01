@@ -1,0 +1,92 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Seat Type Management</title>
+    <link th:href="@{/css/bootstrap.min.css}" rel="stylesheet">
+</head>
+<body class="p-4 bg-light">
+<div class="container">
+    <h1 class="display-5 fw-bold text-primary mb-3">Booking Seat Type</h1>
+    <h3>Wellcome, <span sec:authentication="name"></span>!<a th:href="@{/logout}">Logout</a></h3>
+    <a th:href="@{/seat-type/create}" class="btn btn-dark" sec:authorize="hasRole('ADMIN')">Create Seat Type</a>
+    <hr/>
+    <div>
+        <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
+        <table class="table table-bordered table-hover align-middle">
+            <thead class="table-light">
+            <tr>
+                <th>Code</th>
+                <th>Name</th>
+                <th>Worker Memo</th>
+                <th>Status</th>
+                <th style="width: 300px;" sec:authorize="hasRole('ADMIN')">User Booking</th>
+                <th style="width: 300px;" sec:authorize="hasRole('ADMIN')">Action</th>
+                <th style="width: 300px;" sec:authorize="hasRole('USER')">Action</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="seat : ${seatTypes}" th:classappend="${seat.deleted} ? 'table-secondary'">
+                <td th:text="${seat.seatTypeCode}"></td>
+                <td th:text="${seat.seatTypeName}"></td>
+                <td th:text="${seat.workerMemo}"></td>
+                <td>
+                    <span th:if="${seat.deleted}" class="badge bg-secondary">Deleted</span>
+                    <span th:if="${!seat.deleted and seat.booked}" class="badge bg-success">Booked</span>
+                    <span th:if="${!seat.deleted and !seat.booked}" class="badge bg-info">Available</span>
+                </td>
+                <td sec:authorize="hasRole('ADMIN')"
+                    th:text="${seat.booking != null ? seat.booking.username : ''}"></td>
+                <td sec:authorize="hasRole('ADMIN')">
+                    <a th:href="@{/seat-type/edit/{id}(id=${seat.id})}" class="btn btn-info btn-sm me-1"
+                       th:classappend="${seat.deleted or seat.booked} ? 'disabled' : ''">Edit</a>
+                    <form th:action="@{/seat-type/duplicate/{id}(id=${seat.id})}" method="post" class="d-inline">
+                        <button type="submit" class="btn btn-warning btn-sm me-1" th:disabled="${seat.deleted}">
+                            Duplicate
+                        </button>
+                    </form>
+                    <form th:action="@{/seat-type/delete/{id}(id=${seat.id})}" method="post" class="d-inline">
+                        <button type="submit" class="btn btn-danger btn-sm"
+                                th:disabled="${seat.deleted}">Delete
+                        </button>
+                    </form>
+                </td>
+                <td sec:authorize="hasRole('USER')">
+                    <form th:action="@{/seat-type/booking/{id}(id=${seat.id})}" method="post" class="d-inline">
+                        <button type="submit" class="btn btn-warning btn-sm me-1"
+                                th:disabled="${seat.deleted or seat.booked}">
+                            Booking
+                        </button>
+                    </form>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+        <strong>Total:</strong> <span th:text="${totalCount}"></span>
+
+        <div th:unless="${#lists.isEmpty(bookings)}">
+            <h3>Booking History</h3>
+            <hr/>
+            <table class="table table-bordered table-hover align-middle">
+                <thead class="table-light">
+                <tr>
+                    <th>Code</th>
+                    <th>Name</th>
+                    <th>Worker Memo</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="bookings : ${bookings}">
+                    <td th:text="${bookings.seatType.seatTypeCode}"></td>
+                    <td th:text="${bookings.seatType.seatTypeName}"></td>
+                    <td th:text="${bookings.seatType.workerMemo}"></td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<script th:src="@{/js/bootstrap.bundle.min.js}"></script>
+</body>
+</html>

@@ -1,0 +1,35 @@
+services:
+  oracle:
+    image: gvenzl/oracle-free:latest
+    container_name: oracle-db
+    environment:
+      - ORACLE_PASSWORD=123456
+    ports:
+      - "1521:1521"
+    networks:
+      - oracle-network
+    healthcheck:
+      test: ["CMD", "bash", "-c", "echo 'SELECT 1 FROM dual;' | sqlplus -s system/123456@//oracle:1521/FREEPDB1 | grep 1"]
+      interval: 60s
+      timeout: 10s
+      retries: 5
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: seat-type-management-app
+    ports:
+      - "8080:8080"
+    depends_on:
+      oracle:
+        condition: service_healthy
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:oracle:thin:@oracle:1521/FREEPDB1
+      SPRING_DATASOURCE_USERNAME: SYSTEM
+      SPRING_DATASOURCE_PASSWORD: 123456
+    networks:
+      - oracle-network
+
+networks:
+  oracle-network:
+    driver: bridge
